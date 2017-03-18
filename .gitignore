@@ -1,0 +1,156 @@
+!algorithmist.com quicksort
+!author:
+!Description about the program
+! in main funtion, r1 is used to stack the
+!arguments of the quicksort funtion 
+
+.begin
+.org 2048
+
+.macro	push arg
+	st arg,%r14
+  	sub %r14,4,%r14
+.endmacro
+
+.macro pop arg 
+ 	add %r14,4,%r14
+  	ld %r14,arg
+.endmacro
+
+.macro reset_stack
+  	sethi 0x1FFFFF,%r14
+  	or %r14,0x3FC,%r14
+.endmacro
+
+main:
+    reset_stack
+	mov hi, %r1
+	ld %r1, %r1
+	push %r1
+	mov lo, %r1
+	ld %r1, %r1
+	push %r1
+	
+    	!sethi 15360,%r1
+ 	!srl %r1, 10,%r1
+   	!push %r1
+	!sethi lo,%r1
+   	!srl %r1, 10,%r1
+ 	!ld %r1,%r1
+ 	!push %r1
+	!sethi hi,%r1
+	!srl %r1, 10,%r1
+   	!ld %r1,%r1
+  	!push %r1
+	mov a, %r1
+	ld %r1, %r1
+	push %r1
+	call Quicksort
+ 	halt
+
+Quicksort: 	pop %r1	!A
+		pop %r2	!low
+		pop %r3	!high
+		push %r15
+		cmp %r2, %r3	!if
+		bge LA
+		push %r3
+		push %r2
+		push %r1
+		push %r3
+		push %r2
+		push %r1
+		call Partition
+		pop %r4
+		pop %r1
+		pop %r2
+		pop %r3
+		!push %r4
+		push %r3
+		push %r2
+		push %r1
+		push %r4
+		push %r4
+		push %r2
+		push %r1
+		call Quicksort
+		pop %r4 !Se agrega esta línea
+		pop %r1
+		pop %r2
+		pop %r3
+		!pop %r4
+		!push %r4
+		push %r3
+		push %r2
+		push %r1
+		push %r4 !Se agrega esta línea
+		!push %r3 !Se comenta esta línea
+		inc %r4
+		push %r3 !Se agrega esta línea
+		push %r4
+		push %r1
+		call Quicksort
+		!pop %r1 Se comenta
+		pop %r4 !Se agrega
+		pop %r1
+		pop %r2
+		!pop %r4
+		pop %r3
+		
+LA:		pop %r15
+		jmpl %r15 +4, %r0
+
+Partition:	pop %r1
+		pop %r2
+		pop %r3
+		push %r15
+		sll %r2, 2, %r4
+		add %r1, %r4, %r4
+		ld %r4, %r5
+		mov %r2, %r6
+		add %r2, 1, %r7
+		ba L1
+
+L2:		sll %r7, 2, %r8
+		add %r1, %r8, %r8
+		ld %r8, %r9
+		cmp %r9, %r5
+		bge L3
+		sll %r6, 2, %r10
+		add %r1, %r10, %r10
+		ld %r10, %r11
+		st %r11, %r8
+		st %r9, %r10
+		cmp %r10, %r4
+		bne LZ
+		mov %r8, %r4
+
+LZ:		inc %r6
+
+L3:		inc %r7
+
+L1:		cmp %r7, %r3
+		ble L2
+		sll %r6, 2, %r12
+		add %r1, %r12, %r12
+		ld %r12, %r13
+		!mov %r5, %r12
+		!mov %r13, %r5
+		!mov %r12, %r13
+		st %r5, %r10
+		st %r11, %r4
+		pop %r15
+		push %r6
+		jmpl %r15+4,%r0 
+
+!.org 15360
+a:0
+4
+8
+3
+6
+2
+lo:0
+hi:9
+.end
+
